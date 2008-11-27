@@ -5,5 +5,13 @@
 	<classpathentry kind="src" path="example/src"/>
 	<classpathentry kind="src" path="example/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/apache-mina/mina-core-2.0.0-M3.jar"/>
+	<classpathentry kind="lib" path="lib/blockingmap/blockingMap.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j/slf4j-api-1.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j/slf4j-simple-1.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/springframework/spring.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

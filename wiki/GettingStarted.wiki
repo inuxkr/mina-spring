@@ -1,5 +1,3 @@
-#summary One-sentence summary of this page.
-
 = Getting Started =
 
 = Details =
@@ -8,9 +6,9 @@ Export HelloService and visit it in two styles, invoke all of them in two steps 
 
 1. coding style
    
-   Run org.springframework.remoting.mina.gettingstarted.coding.HelloServiceExporter
-   Run org.springframework.remoting.mina.gettingstarted.coding.HelloServiceClientTest
+   Run HelloServiceExporter in example/src
+   Run HelloServiceClientTest in example/test
 
 2. spring configuration style
-   Run org.springframework.remoting.mina.gettingstarted.config.SpringHelloServiceExporter
-   Run org.springframework.remoting.mina.gettingstarted.config.SpringHelloServiceClientTest
+   Run SpringHelloServiceExporter in example/src
+   Run SpringHelloServiceClientTest in example/test

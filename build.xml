@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="mina-spring" default="usage" basedir=".">
+
+    <property file="build.properties"/>
+
+    <path id="compile.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    	<pathelement path="${build.core.src.dir}"/>
+    	<pathelement path="${build.example.src.dir}"/>
+    </path>
+
+    <!-- targets area -->
+    <target name="usage" description="Echo project name">
+        <echo message="---------------------------------"/>
+        <echo message="---------    mina-spirng  -------"/>
+        <echo message="---------------------------------"/>
+        <echo message=""/>
+    </target>
+
+    <target name="clean" description="Clean all output dirs (dist, javadocs, classes, test-classes, etc)">
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="init" description="Initialize the distribution directory">
+        <mkdir dir="${build.core.src.dir}"/>
+        <mkdir dir="${build.core.test.dir}"/>
+        <mkdir dir="${build.example.src.dir}"/>
+        <mkdir dir="${build.example.test.dir}"/>
+    </target>
+
+    <target name="compile" depends="clean, init" description="Compile src and test source files and copy resources to dist folder">
+          <javac srcdir="${core.src.dir}" destdir="${build.core.src.dir}" debug="on" classpathref="compile.classpath" includes="**/*.java" optimize="on" encoding="UTF-8" />
+          <javac srcdir="${example.src.dir}" destdir="${build.example.src.dir}" debug="on" classpathref="compile.classpath" includes="**/*.java" optimize="on" encoding="UTF-8" />
+          <javac srcdir="${example.test.dir}" destdir="${build.example.test.dir}" debug="on" classpathref="compile.classpath" includes="**/*.java" optimize="on" encoding="UTF-8" />
+    </target>
+
+	<target name="jar" depends="compile" description="Package core and examples">
+		<property name="jar.prefix" value="${project.name}-${main.version}.${minor.version}" />
+		<jar destfile="${dist.dir}/${jar.prefix}-core.jar" basedir="${build.core.src.dir}" includes="**/*.class" />
+		<jar destfile="${dist.dir}/${jar.prefix}-core-source.zip" basedir="${core.src.dir}" includes="**/*.java" />
+		<jar destfile="${dist.dir}/${jar.prefix}-example.jar" basedir="${build.example.src.dir}" includes="**/*.class" />
+		<jar destfile="${dist.dir}/${jar.prefix}-example-source.zip" basedir="${example.src.dir}" includes="**/*.java" />
+		<jar destfile="${dist.dir}/${jar.prefix}-example-test.jar" basedir="${build.example.test.dir}" includes="**/*.class" />
+		<jar destfile="${dist.dir}/${jar.prefix}-example-test-source.zip" basedir="${example.test.dir}" includes="**/*.java" />
+	</target>
+	
+</project>

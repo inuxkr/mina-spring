@@ -1,15 +1,13 @@
 = Getting Started =
 
-Export HelloService and visit it in two styles, invoke all of them in two steps  :
+Export HelloService and visit it in two styles, invoke all of them in two steps  
 
-== 1. coding style ==
-   
-   Run HelloServiceExporter in example/src
+* Coding style
+  
+   # Run HelloServiceExporter in example/src
+   # Run HelloServiceClientTest in example/test
 
-   Run HelloServiceClientTest in example/test
+* Spring configuration style
 
-== 2. spring configuration style ==
-
-   Run SpringHelloServiceExporter in example/src
-
-   Run SpringHelloServiceClientTest in example/test
+   # Run SpringHelloServiceExporter in example/src
+   # Run SpringHelloServiceClientTest in example/test

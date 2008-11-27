@@ -25,6 +25,8 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -33,17 +35,21 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
  */
 public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 	
+	private static Logger logger = LoggerFactory.getLogger(DefaultMinaRequestExecutor.class);
+	
 	private IoConnector connector = new NioSocketConnector();
 	
 	private IoSession session;
 	
+	private MinaClientConfiguration configuration;
+
 	private MinaServiceClientHandler handler = new MinaServiceClientHandler();
 
-	private MinaClientConfiguration configuration;
 	
 	@Override
 	public ReturnAddressAwareRemoteInvocationResult executeRequest(ReturnAddressAwareRemoteInvocation invocation) 
 		throws Exception {
+		
 		WriteFuture writeFuture = session.write(invocation);
 		writeFuture.await();
 		return handler.getReceivedMessage(invocation.getReturnAddress());
@@ -71,7 +77,9 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 		try {
 			session.closeOnFlush().await();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			if (logger.isErrorEnabled()) {
+				logger.error("Close session failed : " + e.getMessage(), e);
+			}
 		}
 		connector.dispose();
 	}

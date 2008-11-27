@@ -41,8 +41,11 @@ public class MinaServiceExporter extends RemoteInvocationBasedExporter implement
 	public static final int DEFAULT_IDLE_TIME = 10;
 
 	private IoAcceptor acceptor = new NioSocketAcceptor();
+	
 	private int port = DEFAULT_PORT;
+	
 	private int readBufferSize = DEFAULT_READ_BUFFER_SIZE;
+	
 	private int idleTime = DEFAULT_IDLE_TIME;
 
 	

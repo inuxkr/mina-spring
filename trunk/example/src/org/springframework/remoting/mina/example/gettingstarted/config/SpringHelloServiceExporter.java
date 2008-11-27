@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package org.springframework.remoting.mina.gettingstarted;
+package org.springframework.remoting.mina.example.gettingstarted.config;
 
-import java.io.Serializable;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class HelloRequest implements Serializable {
+/**
+ *
+ * @autoor politics wang`
+ * @since 2008-11-27
+ *
+ */
+public class SpringHelloServiceExporter {
 
-	private static final long serialVersionUID = 1215374125999860943L;
+	public static void main(String[] args) {
+		new ClassPathXmlApplicationContext("hello-service-exporter.xml", SpringHelloServiceExporter.class);
+	}
 
 }

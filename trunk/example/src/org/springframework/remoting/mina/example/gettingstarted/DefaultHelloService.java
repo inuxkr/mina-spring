@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.springframework.remoting.mina.gettingstarted.config;
+package org.springframework.remoting.mina.example.gettingstarted;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- *
- * @autoor politics wang`
- * @since 2008-11-27
- *
- */
-public class SpringHelloServiceExporter {
 
-	public static void main(String[] args) {
-		new ClassPathXmlApplicationContext("hello-service-exporter.xml", SpringHelloServiceExporter.class);
+public class DefaultHelloService implements HelloService {
+
+	private static AtomicInteger counter = new AtomicInteger();
+	
+	@Override
+	public HelloResponse sayHello(HelloRequest helloRequest) {
+		HelloResponse helloResponse = new HelloResponse();
+		helloResponse.setSequence(counter.incrementAndGet());
+		return helloResponse;
 	}
 
 }

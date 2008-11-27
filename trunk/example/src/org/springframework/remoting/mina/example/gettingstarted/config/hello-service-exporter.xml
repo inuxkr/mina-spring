@@ -5,9 +5,9 @@
 	
 	<bean class="org.springframework.remoting.mina.MinaServiceExporter">
 		<property name="service" ref="helloService" />
-		<property name="serviceInterface" value="org.springframework.remoting.mina.gettingstarted.HelloService" />
+		<property name="serviceInterface" value="org.springframework.remoting.mina.example.gettingstarted.HelloService" />
 	</bean>
 	
-	<bean id="helloService" class="org.springframework.remoting.mina.gettingstarted.DefaultHelloService" />
+	<bean id="helloService" class="org.springframework.remoting.mina.example.gettingstarted.DefaultHelloService" />
 		
 </beans>

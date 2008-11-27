@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j/slf4j-api-1.5.5.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j/slf4j-simple-1.5.5.jar"/>
-	<classpathentry kind="lib" path="lib/springframework/spring.jar"/>
+	<classpathentry kind="lib" path="lib/springframework/spring.jar" sourcepath="lib/springframework/spring-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

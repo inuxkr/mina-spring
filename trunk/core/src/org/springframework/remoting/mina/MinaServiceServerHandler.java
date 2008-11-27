@@ -2,6 +2,8 @@ package org.springframework.remoting.mina;
 
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -11,6 +13,8 @@ import org.springframework.util.Assert;
  * 
  */
 public class MinaServiceServerHandler extends IoHandlerAdapter {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private ReturnAddressAwareRemoteInvocationHandler invocationHandler;
 	
@@ -28,8 +32,8 @@ public class MinaServiceServerHandler extends IoHandlerAdapter {
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("not yet implement");
+		//TODO handle exception
+		logger.error(cause.getMessage(), cause);
 	}
 
 

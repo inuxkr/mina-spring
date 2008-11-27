@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	
+	<bean class="org.springframework.remoting.mina.MinaServiceExporter">
+		<property name="service" ref="helloService" />
+		<property name="serviceInterface" value="org.springframework.remoting.mina.gettingstarted.HelloService" />
+	</bean>
+	
+	<bean id="helloService" class="org.springframework.remoting.mina.gettingstarted.DefaultHelloService" />
+		
+</beans>

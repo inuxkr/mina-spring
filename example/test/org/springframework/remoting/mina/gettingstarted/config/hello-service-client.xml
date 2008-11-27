@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	
+	<bean id="helloService" class="org.springframework.remoting.mina.MinaProxyFactoryBean">
+		<property name="serviceUrl" value="tcp://localhost:22222" />
+		<property name="serviceInterface" value="org.springframework.remoting.mina.gettingstarted.HelloService" />
+	</bean>
+		
+</beans>

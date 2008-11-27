@@ -25,7 +25,9 @@ import java.net.URLStreamHandler;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.remoting.RemoteAccessException;
 import org.springframework.remoting.RemoteInvocationFailureException;
+import org.springframework.remoting.RemoteLookupFailureException;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationBasedAccessor;
 
@@ -40,11 +42,11 @@ public class MinaClientInterceptor extends RemoteInvocationBasedAccessor
 
 	private MinaRequestExecutor minaRequestExecutor;
 
-
 	@Override
 	public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 		ReturnAddressAwareRemoteInvocation invocation = createReturnAddressAwareRemoteInvocation(methodInvocation);
 		ReturnAddressAwareRemoteInvocationResult result = null;
+		
 		try {
 			result = executeRequest(invocation, methodInvocation);
 		}
@@ -82,7 +84,7 @@ public class MinaClientInterceptor extends RemoteInvocationBasedAccessor
 		return new ReturnAddressAwareRemoteInvocation(returnAddress, invocation);
 	}
 
-	private Exception convertMinaAccessException(Throwable ex) {
+	protected RemoteAccessException convertMinaAccessException(Throwable ex) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("not yet implement");
 	}
@@ -114,7 +116,7 @@ public class MinaClientInterceptor extends RemoteInvocationBasedAccessor
 		try {
 			return getURL().getHost();
 		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);		
+			throw new RemoteLookupFailureException("Service URL [" + getServiceUrl() + "] is invalid", e);
 		}
 	}
 
@@ -136,7 +138,7 @@ public class MinaClientInterceptor extends RemoteInvocationBasedAccessor
 		try {
 			return getURL().getPort();
 		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);	
+			throw new RemoteLookupFailureException("Service URL [" + getServiceUrl() + "] is invalid", e);
 		}
 	}
 

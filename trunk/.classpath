@@ -5,7 +5,7 @@
 	<classpathentry kind="src" path="example/src"/>
 	<classpathentry kind="src" path="example/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/apache-mina/mina-core-2.0.0-M3.jar"/>
+	<classpathentry kind="lib" path="lib/apache-mina/mina-core-2.0.0-M3.jar" sourcepath="lib/apache-mina/mina-core-2.0.0-M3-sources.jar"/>
 	<classpathentry kind="lib" path="lib/blockingmap/blockingMap.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-logging.jar"/>

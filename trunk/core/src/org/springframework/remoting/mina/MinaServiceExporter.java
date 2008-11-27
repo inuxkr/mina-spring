@@ -21,11 +21,15 @@ import org.springframework.remoting.support.RemoteInvocationResult;
 public class MinaServiceExporter extends RemoteInvocationBasedExporter implements InitializingBean, DisposableBean {
 
 	public static final int DEFAULT_PORT = 22222;
+	public static final int DEFAULT_READ_BUFFER_SIZE = 2048;
+	public static final int DEFAULT_IDLE_TIME = 10;
 
 	private IoAcceptor acceptor = new NioSocketAcceptor();
-	
 	private int port = DEFAULT_PORT;
+	private int readBufferSize = DEFAULT_READ_BUFFER_SIZE;
+	private int idleTime = DEFAULT_IDLE_TIME;
 
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		prepare();
@@ -35,8 +39,8 @@ public class MinaServiceExporter extends RemoteInvocationBasedExporter implement
 		acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ObjectSerializationCodecFactory()));
 		ReturnAddressAwareRemoteInvocationHandler invocationHandler = new MinaRemoteInvocationHandler();
 		acceptor.setHandler(new MinaServiceServerHandler(invocationHandler));
-		acceptor.getSessionConfig().setReadBufferSize(2048);
-		acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
+		acceptor.getSessionConfig().setReadBufferSize(readBufferSize);
+		acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, idleTime);
 		acceptor.bind(new InetSocketAddress(port));
 	}
 	
@@ -58,6 +62,14 @@ public class MinaServiceExporter extends RemoteInvocationBasedExporter implement
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public void setReadBufferSize(int readBufferSize) {
+		this.readBufferSize = readBufferSize;
+	}
+
+	public void setIdleTime(int idleTime) {
+		this.idleTime = idleTime;
 	}
 
 }

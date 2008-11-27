@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.springframework.remoting.mina.gettingstarted.coding;
+package org.springframework.remoting.mina.example.gettingstarted.coding;
 
 
 import org.junit.Test;
 import org.springframework.remoting.mina.MinaProxyFactoryBean;
 import org.springframework.remoting.mina.MinaServiceExporter;
-import org.springframework.remoting.mina.gettingstarted.AbstractHelloServiceClientTests;
-import org.springframework.remoting.mina.gettingstarted.HelloService;
+import org.springframework.remoting.mina.example.gettingstarted.AbstractHelloServiceClientTests;
+import org.springframework.remoting.mina.example.gettingstarted.HelloService;
 
 
 /**

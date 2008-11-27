@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.remoting.mina.gettingstarted;
+package org.springframework.remoting.mina.example.gettingstarted;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +27,9 @@ import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.remoting.mina.example.gettingstarted.HelloRequest;
+import org.springframework.remoting.mina.example.gettingstarted.HelloResponse;
+import org.springframework.remoting.mina.example.gettingstarted.HelloService;
 
 /**
  *
@@ -59,7 +62,7 @@ public abstract class AbstractHelloServiceClientTests {
 		List<Future<HelloResponse>> futures = executor.invokeAll(tasks);
 		
 		for (Future<HelloResponse> future : futures) {
-			logger.debug(future.get().toString());
+			logger.info(future.get().toString());
 		}
 	}
 

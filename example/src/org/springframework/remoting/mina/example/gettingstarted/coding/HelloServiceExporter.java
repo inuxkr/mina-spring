@@ -14,30 +14,21 @@
  * limitations under the License.
  */
 
-package org.springframework.remoting.mina.gettingstarted;
+package org.springframework.remoting.mina.example.gettingstarted.coding;
 
-import java.io.Serializable;
+import org.springframework.remoting.mina.MinaServiceExporter;
+import org.springframework.remoting.mina.example.gettingstarted.DefaultHelloService;
+import org.springframework.remoting.mina.example.gettingstarted.HelloService;
 
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 
-public class HelloResponse implements Serializable {
+public class HelloServiceExporter {
 
-	private static final long serialVersionUID = 1861076732864361024L;
-	
-	private int sequence;
-
-	public void setSequence(int counter) {
-		this.sequence = counter;
-	}
-	
-	public int getSequence() {
-		return sequence;
-	}
-	
-	@Override
-	public String toString() {
-		return ReflectionToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	public static void main(String[] args) throws Exception {
+		MinaServiceExporter exporter = new MinaServiceExporter();
+		HelloService service = new DefaultHelloService();
+		exporter.setService(service);
+		exporter.setServiceInterface(HelloService.class);
+		exporter.afterPropertiesSet();
 	}
 
 }

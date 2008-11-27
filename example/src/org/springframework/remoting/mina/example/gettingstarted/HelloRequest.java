@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.springframework.remoting.mina.gettingstarted;
+package org.springframework.remoting.mina.example.gettingstarted;
 
-public interface HelloService {
+import java.io.Serializable;
 
-	HelloResponse sayHello(HelloRequest helloRequest);
+public class HelloRequest implements Serializable {
+
+	private static final long serialVersionUID = 1215374125999860943L;
 
 }

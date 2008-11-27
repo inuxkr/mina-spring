@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package org.springframework.remoting.mina.gettingstarted;
+package org.springframework.remoting.mina.example.gettingstarted;
 
-import java.util.concurrent.atomic.AtomicInteger;
+public interface HelloService {
 
-
-public class DefaultHelloService implements HelloService {
-
-	private static AtomicInteger counter = new AtomicInteger();
-	
-	@Override
-	public HelloResponse sayHello(HelloRequest helloRequest) {
-		HelloResponse helloResponse = new HelloResponse();
-		helloResponse.setSequence(counter.incrementAndGet());
-		return helloResponse;
-	}
+	HelloResponse sayHello(HelloRequest helloRequest);
 
 }

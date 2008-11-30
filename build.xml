@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="mina-spring" default="usage" basedir=".">
+<project name="mina-spring" xmlns:ivy="antlib:org.apache.ivy.ant" default="usage" basedir=".">
 
     <property file="build.properties"/>
 
@@ -29,6 +29,10 @@
         <mkdir dir="${build.core.test.dir}"/>
         <mkdir dir="${build.example.src.dir}"/>
         <mkdir dir="${build.example.test.dir}"/>
+    </target>
+	
+    <target name="resolve" description="--> retrieve dependencies with ivy">
+		<ivy:retrieve pattern="${lib.dir}/[organisation]/[artifact]-[revision]-[type].[ext]" />   
     </target>
 
     <target name="compile" depends="clean, init" description="Compile src and test source files and copy resources to dist folder">

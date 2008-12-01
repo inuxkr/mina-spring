@@ -31,8 +31,8 @@
         <mkdir dir="${build.example.test.dir}"/>
     </target>
 	
-    <target name="resolve" description="--> retrieve dependencies with ivy">
-		<ivy:retrieve pattern="${lib.dir}/[organisation]/[artifact]-[revision]-[type].[ext]" />   
+    <target name="retrieve" description="--> retrieve dependencies with ivy">
+		<ivy:retrieve pattern="${lib.dir}/[organisation]//[artifact]-[revision](-[classifier]).[ext]" />   
     </target>
 
     <target name="compile" depends="clean, init" description="Compile src and test source files and copy resources to dist folder">

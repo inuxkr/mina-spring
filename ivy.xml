@@ -17,10 +17,14 @@
    under the License.    
 -->
 <ivy-module version="2.0">
-    <info organisation="com.springsource" module="mina-spring" />
+
+    <info organisation="com.springsource" module="mina-spring">
+    	<repository name="jdkcn" url="http://maven.jdkcn.com/" artifacts="true" />
+    	<repository name="ibiblio" url="http://repo1.maven.org/maven2" artifacts="true" />
+    </info>
     
     <dependencies>
-        <dependency org="org.apache.mina" name="build" rev="2.0.0-M3" conf="default->default,sources" />
+        <dependency org="org.apache.mina" name="mina-core" rev="2.0.0-M3" conf="default->default,sources" />
         <dependency org="org.springframework" name="spring" rev="2.5.6" conf="default->default,sources" />
     </dependencies>
     

@@ -1,1 +1,5 @@
-We use [http://ant.apache.org/ivy/ apache ivy] as dependency manager, please [http://ant.apache.org/ivy/history/latest-milestone/install.html install] it first.
+* Steps
+
+ # We use [http://ant.apache.org/ivy/ apache ivy] as dependency manager, please   [http://ant.apache.org/ivy/history/latest-milestone/install.html install] it first.
+
+ # Run 'ant init' to retrieve jars from maven repository.

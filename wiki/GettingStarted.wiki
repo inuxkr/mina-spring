@@ -1,6 +1,5 @@
 = Getting Started =
 
-We use [http://ant.apache.org/ivy/ apache ivy] as dependency manager, please [http://ant.apache.org/ivy/history/latest-milestone/install.html install] it first.
 
 Export HelloService and visit it in two styles, invoke all of them in two steps  
 

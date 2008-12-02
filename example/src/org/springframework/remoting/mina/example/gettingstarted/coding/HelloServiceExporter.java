@@ -16,19 +16,30 @@
 
 package org.springframework.remoting.mina.example.gettingstarted.coding;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.remoting.mina.MinaServiceExporter;
 import org.springframework.remoting.mina.example.gettingstarted.DefaultHelloService;
 import org.springframework.remoting.mina.example.gettingstarted.HelloService;
+import org.springframework.util.StopWatch;
 
 
 public class HelloServiceExporter {
 
+	private static Logger logger = LoggerFactory.getLogger(HelloServiceExporter.class);
+	
 	public static void main(String[] args) throws Exception {
+		StopWatch sw = new StopWatch("HelloServiceExporter");
+		sw.start();
 		MinaServiceExporter exporter = new MinaServiceExporter();
 		HelloService service = new DefaultHelloService();
 		exporter.setService(service);
 		exporter.setServiceInterface(HelloService.class);
 		exporter.afterPropertiesSet();
+		sw.stop();
+		logger.info(sw.prettyPrint());
 	}
+	
+	
 
 }

@@ -25,13 +25,15 @@
         <dependency org="commons-lang" name="commons-lang" rev="2.4" conf="default->default,sources" />
         <dependency org="org.apache.mina" name="mina-core" rev="2.0.0-M3" conf="default->default,sources" />
         <dependency org="org.springframework" name="spring" rev="2.5.6" conf="default->default,sources" />
-        
-        <!--  
         <dependency org="org.slf4j.slf4j" name="slf4j-api" rev="1.5.5" conf="default->default,sources" />
         <dependency org="org.slf4j.slf4j" name="slf4j-log4j12" rev="1.5.5" conf="default->default,sources" />
-        <dependency org="log4j" name="log4j" rev="1.2.15" conf="default->default,sources" />
+        <dependency org="log4j" name="log4j" rev="1.2.15" conf="default->default">
+        	<exclude org="javax.mail" module="mail" />
+        	<exclude org="javax.jms" module="jms" />
+        	<exclude org="com.sun.jdmk" module="jmxtools" />
+        	<exclude org="com.sun.jmx" module="jmxri" />
+        </dependency>
         <dependency org="org.xl" name="blockingMap" rev="0.9" conf="default->default,sources" />
-        -->
         
     </dependencies>
     

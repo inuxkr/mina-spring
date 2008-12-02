@@ -16,7 +16,10 @@
 
 package org.springframework.remoting.mina.example.gettingstarted.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.util.StopWatch;
 
 /**
  *
@@ -26,8 +29,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringHelloServiceExporter {
 
+	private static Logger logger = LoggerFactory.getLogger(SpringHelloServiceExporter.class);
+	
 	public static void main(String[] args) {
+		StopWatch sw = new StopWatch("HelloServiceExporter");
+		sw.start();
 		new ClassPathXmlApplicationContext("hello-service-exporter.xml", SpringHelloServiceExporter.class);
+		sw.stop();
+		logger.info(sw.prettyPrint());
 	}
 
 }

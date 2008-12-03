@@ -29,13 +29,13 @@ import org.springframework.util.Assert;
  * @since 2008-11-25
  * 
  */
-public class MinaServiceServerHandler extends IoHandlerAdapter {
+public class MinaServerHandler extends IoHandlerAdapter {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private ReturnAddressAwareRemoteInvocationHandler invocationHandler;
 	
-	public MinaServiceServerHandler(ReturnAddressAwareRemoteInvocationHandler remoteInvocationInvoker) {
+	public MinaServerHandler(ReturnAddressAwareRemoteInvocationHandler remoteInvocationInvoker) {
 		this.invocationHandler = remoteInvocationInvoker;
 	}
 

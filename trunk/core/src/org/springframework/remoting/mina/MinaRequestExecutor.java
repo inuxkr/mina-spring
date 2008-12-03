@@ -16,6 +16,7 @@
 
 package org.springframework.remoting.mina;
 
+import org.apache.mina.core.service.IoConnector;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -29,6 +30,9 @@ public interface MinaRequestExecutor extends InitializingBean, DisposableBean {
 	
 	void setMinaClientConfiguration(MinaClientConfiguration configuration);
 	
-	ReturnAddressAwareRemoteInvocationResult executeRequest(ReturnAddressAwareRemoteInvocation invocation) throws Exception;
+	void setResultReceiver(ResultReceiver resultReceiver);
 
+	void setConnector(IoConnector connector);
+
+	ReturnAddressAwareRemoteInvocationResult executeRequest(ReturnAddressAwareRemoteInvocation invocation) throws Exception;
 }

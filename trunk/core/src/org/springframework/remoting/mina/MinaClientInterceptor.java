@@ -24,6 +24,7 @@ import java.net.URLStreamHandler;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.remoting.RemoteAccessException;
 import org.springframework.remoting.RemoteInvocationFailureException;
@@ -103,6 +104,8 @@ public class MinaClientInterceptor extends RemoteInvocationBasedAccessor
 	private void initializeMinaRequestExecutor() throws Exception {
 		minaRequestExecutor = new DefaultMinaRequestExecutor();
 		minaRequestExecutor.setMinaClientConfiguration(this);
+		minaRequestExecutor.setConnector(new NioSocketConnector());
+		minaRequestExecutor.setResultReceiver(new BlockingMapResultReceiver());
 		minaRequestExecutor.afterPropertiesSet();
 	}
 

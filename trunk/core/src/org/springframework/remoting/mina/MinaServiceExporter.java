@@ -57,7 +57,7 @@ public class MinaServiceExporter extends RemoteInvocationBasedExporter implement
 	private void prepare() throws Exception {
 		acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ObjectSerializationCodecFactory()));
 		ReturnAddressAwareRemoteInvocationHandler invocationHandler = new MinaRemoteInvocationHandler();
-		acceptor.setHandler(new MinaServiceServerHandler(invocationHandler));
+		acceptor.setHandler(new MinaServerHandler(invocationHandler));
 		acceptor.getSessionConfig().setReadBufferSize(readBufferSize);
 		acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, idleTime);
 		acceptor.bind(new InetSocketAddress(port));

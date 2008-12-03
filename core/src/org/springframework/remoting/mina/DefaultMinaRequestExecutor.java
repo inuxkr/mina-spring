@@ -24,9 +24,7 @@ import org.apache.mina.core.service.IoConnector;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
-import org.apache.mina.transport.socket.nio.NioSocketConnector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 /**
  * 
@@ -35,15 +33,13 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 	
-	private static Logger logger = LoggerFactory.getLogger(DefaultMinaRequestExecutor.class);
-	
-	private IoConnector connector = new NioSocketConnector();
+	private IoConnector connector;
 	
 	private IoSession session;
 	
 	private MinaClientConfiguration configuration;
 
-	private MinaServiceClientHandler handler = new MinaServiceClientHandler();
+	private ResultReceiver resultReceiver;
 
 	
 	@Override
@@ -51,18 +47,20 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 		throws Exception {
 		
 		WriteFuture writeFuture = session.write(invocation);
-		writeFuture.await();
-		return handler.getReceivedMessage(invocation.getReturnAddress());
+		writeFuture.awaitUninterruptibly();
+		return resultReceiver.getResult(invocation.getReturnAddress());
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(connector, "connector required");
+		Assert.notNull(resultReceiver, "resultReceiver required");
 		initialize();
 	}
 
 	public void initialize() {
 		connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ObjectSerializationCodecFactory()));
-		connector.setHandler(handler);
+		connector.setHandler(new MinaClientHandler(resultReceiver));
 		ConnectFuture future = connector.connect(getAddress());
 		future.awaitUninterruptibly();
 		session = future.getSession();		
@@ -74,13 +72,7 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 
 	@Override
 	public void destroy() throws Exception {
-		try {
-			session.closeOnFlush().await();
-		} catch (InterruptedException e) {
-			if (logger.isErrorEnabled()) {
-				logger.error("Close session failed : " + e.getMessage(), e);
-			}
-		}
+		session.closeOnFlush().awaitUninterruptibly();
 		connector.dispose();
 	}
 
@@ -88,5 +80,15 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 	public void setMinaClientConfiguration(MinaClientConfiguration configuration) {
 		this.configuration = configuration;
 	}
+
+	public void setResultReceiver(ResultReceiver resultReceiver) {
+		this.resultReceiver = resultReceiver;
+	}
+
+	public void setConnector(IoConnector connector) {
+		this.connector = connector;
+	}
+	
+	
 
 }

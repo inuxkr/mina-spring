@@ -31,6 +31,7 @@ public class UniqueStringReturnAddress implements ReturnAddress {
 
 	private static final long serialVersionUID = -3771718276168163527L;
 	
+	@SuppressWarnings("unused")
 	private String unique;
 	
 	public UniqueStringReturnAddress() {

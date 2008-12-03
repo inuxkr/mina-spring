@@ -34,6 +34,7 @@
         	<exclude org="com.sun.jmx" module="jmxri" />
         </dependency>
         <dependency org="org.xl" name="blockingMap" rev="0.9" conf="default->default,sources" />
+        <dependency org="org.easymock" name="easymock" rev="2.4" conf="default->default,sources" />
         
     </dependencies>
     

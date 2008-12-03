@@ -21,7 +21,7 @@ import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xl.util.concurrent.BlockingMap;
+import org.springframework.util.Assert;
 
 /**
  * 
@@ -29,13 +29,17 @@ import org.xl.util.concurrent.BlockingMap;
  * @since 2008-11-25
  * 
  */
-public class MinaServiceClientHandler extends IoHandlerAdapter {
+public class MinaClientHandler extends IoHandlerAdapter {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	private BlockingMap<ReturnAddress, ReturnAddressAwareRemoteInvocationResult> results 
-		= new BlockingMap<ReturnAddress, ReturnAddressAwareRemoteInvocationResult>();
+	private final ResultReceiver resultReceiver;
 	
+	public MinaClientHandler(ResultReceiver resultReceiver) {
+		Assert.notNull(resultReceiver, "resultReceiver required");
+		this.resultReceiver = resultReceiver;
+	}
+
 	@Override
 	public void messageReceived(IoSession session, Object message)
 		throws Exception {
@@ -44,7 +48,7 @@ public class MinaServiceClientHandler extends IoHandlerAdapter {
 			logger.trace("Message received : " + message);
 		}
 		ReturnAddressAwareRemoteInvocationResult result = (ReturnAddressAwareRemoteInvocationResult) message;
-		results.put(result.getReturnAddress(), result);
+		resultReceiver.resultReceived(result);
 	}
 
 	@Override
@@ -54,17 +58,5 @@ public class MinaServiceClientHandler extends IoHandlerAdapter {
 		}		
 	}
 	
-	public ReturnAddressAwareRemoteInvocationResult getReceivedMessage(ReturnAddress returnAddress) {
-		try {
-			ReturnAddressAwareRemoteInvocationResult invocation = (ReturnAddressAwareRemoteInvocationResult) results.take(returnAddress);
-			return invocation;
-		} catch (InterruptedException e) {
-			String message = "Receive Message failed : " + e.getMessage();
-			if (logger.isErrorEnabled()) {
-				logger.error(message, e);
-			}
-			throw new RuntimeException(message, e);
-		}
-	}
 
 }

@@ -42,7 +42,7 @@ public class MinaProxyFactoryBean extends MinaClientInterceptor implements Facto
 		return this.serviceProxy;
 	}
 
-	public Class getObjectType() {
+	public Class<?> getObjectType() {
 		return getServiceInterface();
 	}
 

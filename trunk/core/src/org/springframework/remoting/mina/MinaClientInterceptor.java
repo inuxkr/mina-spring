@@ -17,7 +17,9 @@
 package org.springframework.remoting.mina;
 
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
@@ -27,6 +29,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.remoting.RemoteAccessException;
+import org.springframework.remoting.RemoteConnectFailureException;
 import org.springframework.remoting.RemoteInvocationFailureException;
 import org.springframework.remoting.RemoteLookupFailureException;
 import org.springframework.remoting.support.RemoteInvocation;
@@ -75,8 +78,12 @@ public class MinaClientInterceptor extends RemoteInvocationBasedAccessor
 		return getMinaRequestExecutor().executeRequest(invocation);
 	}
 
-	private MinaRequestExecutor getMinaRequestExecutor() {
+	public MinaRequestExecutor getMinaRequestExecutor() {
 		return minaRequestExecutor;
+	}
+
+	public void setMinaRequestExecutor(MinaRequestExecutor minaRequestExecutor) {
+		this.minaRequestExecutor = minaRequestExecutor;
 	}
 
 	private ReturnAddressAwareRemoteInvocation createReturnAddressAwareRemoteInvocation(MethodInvocation methodInvocation) {
@@ -86,27 +93,40 @@ public class MinaClientInterceptor extends RemoteInvocationBasedAccessor
 	}
 
 	protected RemoteAccessException convertMinaAccessException(Throwable ex) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("not yet implement");
+		if (ex instanceof SocketException) {
+			throw new RemoteConnectFailureException(
+					"Could not connect to Mina remote service at [" + getServiceUrl() + "]", ex);
+		}
+		else if (ex instanceof ClassNotFoundException || ex instanceof NoClassDefFoundError ||
+				ex instanceof InvalidClassException) {
+			throw new RemoteAccessException(
+					"Could not deserialize result from Mina remote service [" + getServiceUrl() + "]", ex);
+		}
+		else {
+			throw new RemoteAccessException(
+			    "Could not access Mina remote service at [" + getServiceUrl() + "]", ex);
+		}
 	}
 
 	@Override
 	public void afterPropertiesSet() {
 		super.afterPropertiesSet();
-		try {
-			initializeMinaRequestExecutor();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		if (minaRequestExecutor == null) {
+			minaRequestExecutor = createDefaultRequestExecutor();
 		}
 	}
 
-	
-	private void initializeMinaRequestExecutor() throws Exception {
-		minaRequestExecutor = new DefaultMinaRequestExecutor();
-		minaRequestExecutor.setMinaClientConfiguration(this);
-		minaRequestExecutor.setConnector(new NioSocketConnector());
-		minaRequestExecutor.setResultReceiver(new BlockingMapResultReceiver());
-		minaRequestExecutor.afterPropertiesSet();
+	private MinaRequestExecutor createDefaultRequestExecutor() {
+		MinaRequestExecutor defaultExecutor = new DefaultMinaRequestExecutor();
+		defaultExecutor.setMinaClientConfiguration(this);
+		defaultExecutor.setConnector(new NioSocketConnector());
+		defaultExecutor.setResultReceiver(new BlockingMapResultReceiver());
+		try {
+			defaultExecutor.afterPropertiesSet();
+		} catch (Exception e) {
+			throw new RuntimeException("Initialize minaRequestorExecutor failed : " + e.getMessage(), e);
+		}
+		return defaultExecutor;
 	}
 
 	@Override
@@ -124,16 +144,12 @@ public class MinaClientInterceptor extends RemoteInvocationBasedAccessor
 	}
 
 	private URL getURL() throws MalformedURLException {
-		try {
-			URL url = new URL(null, getServiceUrl(), new DummyURLStreamHandler());
-			String protocol = url.getProtocol();
-			if (protocol != null && !"tcp".equals(protocol)) {
-				throw new MalformedURLException("Invalid URL scheme '" + protocol + "'");
-			}
-			return url;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		URL url = new URL(null, getServiceUrl(), new DummyURLStreamHandler());
+		String protocol = url.getProtocol();
+		if (protocol != null && !"tcp".equals(protocol)) {
+			throw new MalformedURLException("Invalid URL scheme '" + protocol + "'");
 		}
+		return url;
 	}
 
 	@Override

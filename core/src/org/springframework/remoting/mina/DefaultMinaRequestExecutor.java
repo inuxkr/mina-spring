@@ -48,7 +48,7 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 		
 		WriteFuture writeFuture = session.write(invocation);
 		writeFuture.awaitUninterruptibly();
-		return resultReceiver.getResult(invocation.getReturnAddress());
+		return resultReceiver.takeResult(invocation.getReturnAddress());
 	}
 
 	@Override

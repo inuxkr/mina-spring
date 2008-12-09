@@ -16,27 +16,18 @@
 
 package org.springframework.remoting.mina;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
+import org.springframework.remoting.support.RemoteInvocation;
 
 /**
  *
  * @author politics wang
- * @since 2008-12-09
+ * @since Dec 10, 2008
  *
  */
-public class BlockingMapResultReceiverTest {
+public abstract class RemoteInvocationFactory {
 
-	@Test
-	public final void getResult() {
-		ReturnAddress returnAddress = new UniqueStringReturnAddress();
-		Object value = new Object();
-		ReturnAddressAwareRemoteInvocationResult expected = new ReturnAddressAwareRemoteInvocationResult(returnAddress, value);
-		BlockingMapResultReceiver receiver = new BlockingMapResultReceiver();
-		receiver.resultReceived(expected);
-		ReturnAddressAwareRemoteInvocationResult actual = receiver.takeResult(returnAddress);
-		assertEquals(expected, actual);
+	public static RemoteInvocation createHashCodeRemoteInvocation() {
+		return new RemoteInvocation("hashCode", new Class[] { }, new Object[] { });
 	}
 
 }

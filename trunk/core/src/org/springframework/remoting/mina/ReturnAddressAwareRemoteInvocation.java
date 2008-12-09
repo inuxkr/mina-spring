@@ -30,12 +30,12 @@ public class ReturnAddressAwareRemoteInvocation extends RemoteInvocation impleme
 	
 	private ReturnAddress returnAddress;
 
-	public ReturnAddressAwareRemoteInvocation(ReturnAddress returnAddress, RemoteInvocation invocation) {
+	public ReturnAddressAwareRemoteInvocation(ReturnAddress returnAddress, RemoteInvocation decorated) {
 		setReturnAddress(returnAddress);
-		setArguments(invocation.getArguments());
-		setAttributes(invocation.getAttributes());
-		setMethodName(invocation.getMethodName());
-		setParameterTypes(invocation.getParameterTypes());
+		setArguments(decorated.getArguments());
+		setAttributes(decorated.getAttributes());
+		setMethodName(decorated.getMethodName());
+		setParameterTypes(decorated.getParameterTypes());
 	}
 
 	public ReturnAddress getReturnAddress() {

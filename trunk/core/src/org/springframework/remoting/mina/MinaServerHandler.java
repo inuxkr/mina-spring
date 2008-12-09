@@ -36,6 +36,7 @@ public class MinaServerHandler extends IoHandlerAdapter {
 	private ReturnAddressAwareRemoteInvocationHandler invocationHandler;
 	
 	public MinaServerHandler(ReturnAddressAwareRemoteInvocationHandler remoteInvocationInvoker) {
+		Assert.notNull(remoteInvocationInvoker, "remoteInvocationInvoker required");
 		this.invocationHandler = remoteInvocationInvoker;
 	}
 

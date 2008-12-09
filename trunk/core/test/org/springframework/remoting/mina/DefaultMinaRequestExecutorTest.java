@@ -66,7 +66,7 @@ public class DefaultMinaRequestExecutorTest {
 		IoSession session = EasyMock.createMock(IoSession.class);
 		EasyMock.expect(connectFuture.getSession()).andReturn(session );
 		
-		RemoteInvocation decorated = new RemoteInvocation("foo", new Class[] {}, new Object[] {});
+		RemoteInvocation decorated = RemoteInvocationFactory.createHashCodeRemoteInvocation();
 		ReturnAddressAwareRemoteInvocation invocation = new ReturnAddressAwareRemoteInvocation(returnAddress, decorated);
 		WriteFuture writeFuture = EasyMock.createMock(WriteFuture.class);
 		EasyMock.expect(session.write(invocation)).andReturn(writeFuture);
@@ -75,7 +75,7 @@ public class DefaultMinaRequestExecutorTest {
 		ResultReceiver resultReceiver = EasyMock.createMock(ResultReceiver.class);
 		resultReceiver.resultReceived(expected);
 		EasyMock.expectLastCall().asStub();
-		EasyMock.expect(resultReceiver.getResult(returnAddress)).andReturn(expected);
+		EasyMock.expect(resultReceiver.takeResult(returnAddress)).andReturn(expected);
 		
 		CloseFuture closeFuture = EasyMock.createMock(CloseFuture.class);
 		EasyMock.expect(session.closeOnFlush()).andReturn(closeFuture);

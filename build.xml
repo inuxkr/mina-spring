@@ -42,13 +42,31 @@
     </target>
 
 	<target name="jar" depends="compile" description="Package core and examples">
-		<property name="jar.prefix" value="${project.name}-${main.version}.${minor.version}" />
-		<jar destfile="${dist.dir}/${jar.prefix}-core.jar" basedir="${build.core.src.dir}" includes="**/*.class" />
-		<jar destfile="${dist.dir}/${jar.prefix}-core-source.zip" basedir="${core.src.dir}" includes="**/*.java" />
-		<jar destfile="${dist.dir}/${jar.prefix}-example.jar" basedir="${build.example.src.dir}" includes="**/*.class" />
-		<jar destfile="${dist.dir}/${jar.prefix}-example-source.zip" basedir="${example.src.dir}" includes="**/*.java" />
-		<jar destfile="${dist.dir}/${jar.prefix}-example-test.jar" basedir="${build.example.test.dir}" includes="**/*.class" />
-		<jar destfile="${dist.dir}/${jar.prefix}-example-test-source.zip" basedir="${example.test.dir}" includes="**/*.java" />
+		<jar destfile="${dist.dir}/${release.fullname}-core.jar" basedir="${build.core.src.dir}" includes="**/*.class" />
+		<jar destfile="${dist.dir}/${release.fullname}-core-source.zip" basedir="${core.src.dir}" includes="**/*.java" />
+		<jar destfile="${dist.dir}/${release.fullname}-example.jar" basedir="${build.example.src.dir}" includes="**/*.class" />
+		<jar destfile="${dist.dir}/${release.fullname}-example-source.zip" basedir="${example.src.dir}" includes="**/*.java" />
+		<jar destfile="${dist.dir}/${release.fullname}-example-test.jar" basedir="${build.example.test.dir}" includes="**/*.class" />
+		<jar destfile="${dist.dir}/${release.fullname}-example-test-source.zip" basedir="${example.test.dir}" includes="**/*.java" />
 	</target>
+	
+	<target name="releasezips">
+
+		<delete file="${release.fullname}.zip" />
+		
+		<fileset id="main" dir=".">
+			<exclude name="*svn*" />
+			<exclude name="bin/**/*"/>
+			<exclude name="${build.dir}/**/*"/>
+			<exclude name="${lib.dir}/**/*"/>
+		</fileset>
+		
+		<zip destfile="${release.fullname}.zip">
+			<zipfileset refid="main" />
+		</zip>
+	</target>
+	
+	<target name="release" depends="jar, releasezips" description="Build release distributions from scratch"/>
+
 	
 </project>

@@ -36,8 +36,7 @@ public class BlockingMapResultReceiver implements ResultReceiver {
 	@Override
 	public ReturnAddressAwareRemoteInvocationResult takeResult(ReturnAddress returnAddress) {
 		try {
-			ReturnAddressAwareRemoteInvocationResult invocation = (ReturnAddressAwareRemoteInvocationResult) results.take(returnAddress);
-			return invocation;
+			return (ReturnAddressAwareRemoteInvocationResult) results.take(returnAddress);
 		} catch (InterruptedException e) {
 			String message = "Receive Message failed : " + e.getMessage();
 			if (logger.isErrorEnabled()) {

@@ -16,9 +16,11 @@
 
 package org.springframework.remoting.mina.example.gettingstarted.coding;
 
+import org.apache.mina.core.service.IoAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.remoting.mina.MinaServiceExporter;
+import org.springframework.remoting.mina.NioSocketAcceptorFactoryBean;
 import org.springframework.remoting.mina.example.gettingstarted.DefaultHelloService;
 import org.springframework.remoting.mina.example.gettingstarted.HelloService;
 import org.springframework.util.StopWatch;
@@ -32,8 +34,8 @@ public class HelloServiceExporter {
 		StopWatch sw = new StopWatch("HelloServiceExporter");
 		sw.start();
 		MinaServiceExporter exporter = new MinaServiceExporter();
-		HelloService service = new DefaultHelloService();
-		exporter.setService(service);
+		exporter.setIoAcceptor((IoAcceptor) new NioSocketAcceptorFactoryBean().getObject());
+		exporter.setService(new DefaultHelloService());
 		exporter.setServiceInterface(HelloService.class);
 		exporter.afterPropertiesSet();
 		sw.stop();

@@ -52,6 +52,7 @@ public class MinaServerHandler extends IoHandlerAdapter {
 	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
 		//TODO handle exception
 		logger.error(cause.getMessage(), cause);
+		throw new UnsupportedOperationException("NYI");
 	}
 
 

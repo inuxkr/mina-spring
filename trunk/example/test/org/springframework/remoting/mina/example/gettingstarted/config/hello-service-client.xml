@@ -4,7 +4,7 @@
 <beans>
 	
 	<bean id="helloService" class="org.springframework.remoting.mina.MinaProxyFactoryBean">
-		<property name="serviceUrl" value="tcp://localhost:22222" />
+		<property name="serviceUrl" value="tcp://localhost:8012" />
 		<property name="serviceInterface" value="org.springframework.remoting.mina.example.gettingstarted.HelloService" />
 	</bean>
 		

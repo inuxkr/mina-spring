@@ -23,9 +23,10 @@ import java.lang.reflect.Method;
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.EasyMock;
 import org.junit.Test;
+import org.springframework.remoting.RemoteAccessException;
 
 /**
- * TODO add exception cases
+ * 
  * @author politics wang
  * @since 2008-12-09
  *
@@ -59,6 +60,30 @@ public class MinaClientInterceptorTest {
 		assertEquals(expected, actual);
 		
 		EasyMock.verify(mocks);
+	}
+	
+	@Test(expected = RemoteAccessException.class)
+	public void exceptionCaught() throws Throwable {
+		MethodInvocation methodInvocation = EasyMock.createMock(MethodInvocation.class);
+		
+		Method method = Object.class.getMethod("hashCode", new Class[] { });
+		EasyMock.expect(methodInvocation.getMethod()).andReturn(method).anyTimes();
+		Object[] arguments = new Object[] { };
+		EasyMock.expect(methodInvocation.getArguments()).andReturn(arguments).anyTimes();
+		
+		MinaRequestExecutor minaRequestExecutor = EasyMock.createMock(MinaRequestExecutor.class);
+		Throwable throwable = new Exception("Test Exception");
+		EasyMock.expect(minaRequestExecutor.executeRequest((ReturnAddressAwareRemoteInvocation) EasyMock.anyObject())).andThrow(throwable );
+		
+		Object[] mocks = new Object[] {methodInvocation, minaRequestExecutor};
+		
+		EasyMock.replay(mocks);
+		
+		MinaClientInterceptor interceptor = new MinaClientInterceptor();
+		interceptor.setServiceUrl("tcp://localhost:22222");
+		interceptor.setMinaRequestExecutor(minaRequestExecutor);
+		interceptor.afterPropertiesSet();
+		interceptor.invoke(methodInvocation);
 	}
 
 }

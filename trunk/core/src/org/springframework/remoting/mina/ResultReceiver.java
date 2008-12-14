@@ -27,5 +27,7 @@ public interface ResultReceiver {
 	void resultReceived(ReturnAddressAwareRemoteInvocationResult result);
 
 	ReturnAddressAwareRemoteInvocationResult takeResult(ReturnAddress returnAddress);
-
+	
+	void interrupt();
+	
 }

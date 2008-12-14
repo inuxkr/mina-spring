@@ -20,16 +20,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.remoting.mina.example.gettingstarted.HelloRequest;
-import org.springframework.remoting.mina.example.gettingstarted.HelloResponse;
-import org.springframework.remoting.mina.example.gettingstarted.HelloService;
 
 /**
  *
@@ -41,10 +37,10 @@ public abstract class AbstractHelloServiceClientTests {
 
 	public Logger logger = LoggerFactory.getLogger(getClass());
 	
-	private static final int CONCURRENT_SIZE = 10;
-	private static final int RUN_TIMES = 1000;
+	private static final int CONCURRENT_SIZE = 1;
+	private static final int RUN_TIMES = 1000000;
 
-	protected void invokeService(final HelloService service) throws InterruptedException, ExecutionException {
+	protected void invokeService(final HelloService service) throws InterruptedException {
 		ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
 		
 		Collection<Callable<HelloResponse>> tasks = new ArrayList<Callable<HelloResponse>>();
@@ -54,6 +50,7 @@ public abstract class AbstractHelloServiceClientTests {
 				@Override
 				public HelloResponse call() throws Exception {
 					HelloResponse response = service.sayHello(new HelloRequest());
+					logger.info(response.toString());
 					return response;
 				}
 			});
@@ -62,7 +59,12 @@ public abstract class AbstractHelloServiceClientTests {
 		List<Future<HelloResponse>> futures = executor.invokeAll(tasks);
 		
 		for (Future<HelloResponse> future : futures) {
-			logger.info(future.get().toString());
+			try {
+				future.get();
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+				continue;
+			}
 		}
 	}
 

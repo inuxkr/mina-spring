@@ -41,18 +41,37 @@ public class DefaultMinaRequestExecutorTest {
 
 	
 	@Test
-	public void testExecuteRequest() throws Exception {
+	public void connect() {
+		IoConnector connector = EasyMock.createMock(IoConnector.class);
+		
+		MinaClientConfiguration configuration = new StaticConfiguration();
+		InetSocketAddress socketAddress = new InetSocketAddress(configuration.getHostName(), configuration.getPort());
+		
+		EasyMock.expect(connector.connect(socketAddress)).andThrow(new RuntimeException("server crashed"));
+		ConnectFuture connectFuture = EasyMock.createMock(ConnectFuture.class);
+		EasyMock.expect(connector.connect(socketAddress)).andReturn(connectFuture);
+		EasyMock.expect(connectFuture.awaitUninterruptibly()).andReturn(connectFuture);
+		IoSession session = EasyMock.createMock(IoSession.class);
+		EasyMock.expect(connectFuture.getSession()).andReturn(session);
+		
+		Object[] mocks = new Object[] {connector, connectFuture, session};
+		EasyMock.replay(mocks);
+		
+		DefaultMinaRequestExecutor executor = new DefaultMinaRequestExecutor();
+		executor.setMinaClientConfiguration(configuration);
+		executor.setConnector(connector);
+		executor.connect();
+	
+		EasyMock.verify(mocks);
+	}
+	
+	@Test
+	public void executeRequest() throws Exception {
 		ReturnAddress returnAddress = new UniqueStringReturnAddress();
 		Object value = new Object();
 		ReturnAddressAwareRemoteInvocationResult expected = new ReturnAddressAwareRemoteInvocationResult(returnAddress, value);
 
-		MinaClientConfiguration configuration = EasyMock.createMock(MinaClientConfiguration.class);
-		
-		String hostName = "host";
-		EasyMock.expect(configuration.getHostName()).andReturn(hostName);
-		Integer port = 22;
-		EasyMock.expect(configuration.getPort()).andReturn(port);
-
+		MinaClientConfiguration configuration = new StaticConfiguration();
 		IoConnector connector = EasyMock.createMock(IoConnector.class);
 		DefaultIoFilterChainBuilder filterChain = new DefaultIoFilterChainBuilder();
 		EasyMock.expect(connector.getFilterChain()).andReturn(filterChain);
@@ -60,7 +79,7 @@ public class DefaultMinaRequestExecutorTest {
 		EasyMock.expectLastCall().asStub();
 		
 		ConnectFuture connectFuture = EasyMock.createMock(ConnectFuture.class);
-		InetSocketAddress socketAddress = new InetSocketAddress(hostName, port);
+		InetSocketAddress socketAddress = new InetSocketAddress(configuration.getHostName(), configuration.getPort());
 		EasyMock.expect(connector.connect(socketAddress)).andReturn(connectFuture);
 		EasyMock.expect(connectFuture.awaitUninterruptibly()).andReturn(connectFuture);
 		IoSession session = EasyMock.createMock(IoSession.class);
@@ -83,7 +102,7 @@ public class DefaultMinaRequestExecutorTest {
 		connector.dispose();
 		EasyMock.expectLastCall().asStub();
 		
-		Object[] mocks = new Object[] {configuration, connector, connectFuture, session, writeFuture, resultReceiver, closeFuture};
+		Object[] mocks = new Object[] {connector, connectFuture, session, writeFuture, resultReceiver, closeFuture};
 
 		EasyMock.replay(mocks);
 
@@ -98,5 +117,16 @@ public class DefaultMinaRequestExecutorTest {
 		
 		EasyMock.verify(mocks);
 	}
-
+	
+	private static final class StaticConfiguration implements MinaClientConfiguration {
+		@Override
+		public String getHostName() {
+			return "localhost";
+		}
+		@Override
+		public int getPort() {
+			return NioSocketAcceptorFactoryBean.DEFAULT_PORT;
+		}
+	}
+	
 }

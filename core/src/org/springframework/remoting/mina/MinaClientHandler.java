@@ -31,13 +31,17 @@ import org.springframework.util.Assert;
  */
 public class MinaClientHandler extends IoHandlerAdapter {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	private final ResultReceiver resultReceiver;
+
+	private final MinaRequestExecutor requestExecutor;
 	
-	public MinaClientHandler(ResultReceiver resultReceiver) {
+	public MinaClientHandler(ResultReceiver resultReceiver, MinaRequestExecutor requestExecutor) {
 		Assert.notNull(resultReceiver, "resultReceiver required");
+		Assert.notNull(requestExecutor, "requestExecutor required");
 		this.resultReceiver = resultReceiver;
+		this.requestExecutor = requestExecutor;
 	}
 
 	@Override
@@ -45,7 +49,7 @@ public class MinaClientHandler extends IoHandlerAdapter {
 		throws Exception {
 		
 		if (logger.isDebugEnabled()) {
-			logger.trace("Message received : " + message);
+			logger.debug("Message received : " + message);
 		}
 		ReturnAddressAwareRemoteInvocationResult result = (ReturnAddressAwareRemoteInvocationResult) message;
 		resultReceiver.resultReceived(result);
@@ -54,9 +58,17 @@ public class MinaClientHandler extends IoHandlerAdapter {
 	@Override
 	public void messageSent(IoSession session, Object message) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.trace("Message sent : " + message);
+			logger.debug("Message sent : " + message);
 		}		
 	}
 	
+    @Override
+	public void sessionClosed(IoSession session) throws Exception {
+    	if (logger.isInfoEnabled()) {
+    		logger.info("Session closed, try reconnect to server");
+    		requestExecutor.connect();
+    	}
+	}
+
 
 }

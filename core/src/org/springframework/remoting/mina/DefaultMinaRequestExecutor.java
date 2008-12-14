@@ -17,6 +17,7 @@
 package org.springframework.remoting.mina;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.future.WriteFuture;
@@ -24,6 +25,8 @@ import org.apache.mina.core.service.IoConnector;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -33,6 +36,10 @@ import org.springframework.util.Assert;
  */
 public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 	
+	private static final long DEFAULT_RECOVERY_INTERVAL = 3000L;
+
+	private static Logger logger = LoggerFactory.getLogger(DefaultMinaRequestExecutor.class);
+	
 	private IoConnector connector;
 	
 	private IoSession session;
@@ -40,6 +47,12 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 	private MinaClientConfiguration configuration;
 
 	private ResultReceiver resultReceiver;
+	
+	private ReentrantLock lock = new ReentrantLock();
+	
+	private long recoveryInterval = DEFAULT_RECOVERY_INTERVAL;
+
+	private boolean running = true;
 
 	
 	@Override
@@ -60,10 +73,48 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 
 	public void initialize() {
 		connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ObjectSerializationCodecFactory()));
-		connector.setHandler(new MinaClientHandler(resultReceiver));
-		ConnectFuture future = connector.connect(getAddress());
-		future.awaitUninterruptibly();
-		session = future.getSession();		
+		connector.setHandler(new MinaClientHandler(resultReceiver, this));
+		connect();		
+	}
+
+	@Override
+	public void connect() {
+		lock.lock();
+		while (isRunning()) {
+			resultReceiver.interrupt();
+			try {
+				ConnectFuture future = connector.connect(getAddress());
+				future.awaitUninterruptibly();
+				session = future.getSession();
+				logger.info("Successfully connect to " + getAddress());
+				break;
+			} catch(Exception e) {
+				logger.error("Couldn't connect to " + getAddress() + e.getMessage() + ", retrying in " + recoveryInterval  + " ms", e);
+			}	
+
+			sleepInbetweenRecoveryAttempts();
+		}
+		lock.unlock();
+	}
+
+	private boolean isRunning() {
+		return running ;
+	}
+
+	/**
+	 * Sleep according to the specified recovery interval.
+	 * Called inbetween recovery attempts.
+	 */
+	protected void sleepInbetweenRecoveryAttempts() {
+		if (this.recoveryInterval > 0) {
+			try {
+				Thread.sleep(this.recoveryInterval);
+			}
+			catch (InterruptedException interEx) {
+				// Re-interrupt current thread, to allow other threads to react.
+				Thread.currentThread().interrupt();
+			}
+		}
 	}
 
 	private InetSocketAddress getAddress() {
@@ -72,8 +123,11 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 
 	@Override
 	public void destroy() throws Exception {
+		lock.lock();
+		running = false;
 		session.closeOnFlush().awaitUninterruptibly();
 		connector.dispose();
+		lock.unlock();
 	}
 
 	@Override
@@ -87,6 +141,10 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 
 	public void setConnector(IoConnector connector) {
 		this.connector = connector;
+	}
+
+	public void setRecoveryInterval(long recoveryInterval) {
+		this.recoveryInterval = recoveryInterval;
 	}
 	
 	

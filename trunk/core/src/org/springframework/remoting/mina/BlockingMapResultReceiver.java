@@ -69,6 +69,7 @@ public class BlockingMapResultReceiver implements ResultReceiver {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void interrupt() {
+		//FIXME doesn't work
 		DirectFieldAccessor accessor = new DirectFieldAccessor(results);
 		ConcurrentMap<ReturnAddress, ?> map = (ConcurrentMap<ReturnAddress, ?>) accessor.getPropertyValue("map");
 	

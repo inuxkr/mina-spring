@@ -17,7 +17,6 @@
 package org.springframework.remoting.mina.example.gettingstarted;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -37,16 +36,16 @@ public abstract class AbstractHelloServiceClientTests {
 
 	public Logger logger = LoggerFactory.getLogger(getClass());
 	
-	private static final int CONCURRENT_SIZE = 1;
-	private static final int RUN_TIMES = 1000000;
+	private static final int CONCURRENT_SIZE = 10;
+	private static final int RUN_TIMES = 10000;
 
 	protected void invokeService(final HelloService service) throws InterruptedException {
 		ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
 		
-		Collection<Callable<HelloResponse>> tasks = new ArrayList<Callable<HelloResponse>>();
+		List<Future<HelloResponse>> futures = new ArrayList<Future<HelloResponse>>();
 		
 		for (int i = 0; i < RUN_TIMES; i++) {
-			tasks.add(new Callable<HelloResponse>() {
+			Future<HelloResponse> future = executor.submit(new Callable<HelloResponse>() {
 				@Override
 				public HelloResponse call() throws Exception {
 					HelloResponse response = service.sayHello(new HelloRequest());
@@ -54,9 +53,9 @@ public abstract class AbstractHelloServiceClientTests {
 					return response;
 				}
 			});
+			
+			futures.add(future);
 		}
-		
-		List<Future<HelloResponse>> futures = executor.invokeAll(tasks);
 		
 		for (Future<HelloResponse> future : futures) {
 			try {

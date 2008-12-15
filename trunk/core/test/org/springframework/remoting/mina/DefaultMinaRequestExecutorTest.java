@@ -97,7 +97,7 @@ public class DefaultMinaRequestExecutorTest {
 		EasyMock.expect(resultReceiver.takeResult(returnAddress)).andReturn(expected);
 		
 		CloseFuture closeFuture = EasyMock.createMock(CloseFuture.class);
-		EasyMock.expect(session.closeOnFlush()).andReturn(closeFuture);
+		EasyMock.expect(session.close(false)).andReturn(closeFuture);
 		EasyMock.expect(closeFuture.awaitUninterruptibly()).andReturn(closeFuture);
 		connector.dispose();
 		EasyMock.expectLastCall().asStub();

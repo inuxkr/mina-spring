@@ -47,6 +47,9 @@ public class DefaultMinaRequestExecutorTest {
 		MinaClientConfiguration configuration = new StaticConfiguration();
 		InetSocketAddress socketAddress = new InetSocketAddress(configuration.getHostName(), configuration.getPort());
 		
+		ResultReceiver resultReceiver = EasyMock.createMock(ResultReceiver.class);
+		resultReceiver.interrupt();
+		EasyMock.expectLastCall().asStub();
 		EasyMock.expect(connector.connect(socketAddress)).andThrow(new RuntimeException("server crashed"));
 		ConnectFuture connectFuture = EasyMock.createMock(ConnectFuture.class);
 		EasyMock.expect(connector.connect(socketAddress)).andReturn(connectFuture);
@@ -54,12 +57,13 @@ public class DefaultMinaRequestExecutorTest {
 		IoSession session = EasyMock.createMock(IoSession.class);
 		EasyMock.expect(connectFuture.getSession()).andReturn(session);
 		
-		Object[] mocks = new Object[] {connector, connectFuture, session};
+		Object[] mocks = new Object[] {resultReceiver, connector, connectFuture, session};
 		EasyMock.replay(mocks);
 		
 		DefaultMinaRequestExecutor executor = new DefaultMinaRequestExecutor();
 		executor.setMinaClientConfiguration(configuration);
 		executor.setConnector(connector);
+		executor.setResultReceiver(resultReceiver);
 		executor.connect();
 	
 		EasyMock.verify(mocks);
@@ -78,6 +82,10 @@ public class DefaultMinaRequestExecutorTest {
 		connector.setHandler((IoHandler) EasyMock.anyObject());
 		EasyMock.expectLastCall().asStub();
 		
+		ResultReceiver resultReceiver = EasyMock.createMock(ResultReceiver.class);
+		resultReceiver.interrupt();
+		EasyMock.expectLastCall().asStub();
+				
 		ConnectFuture connectFuture = EasyMock.createMock(ConnectFuture.class);
 		InetSocketAddress socketAddress = new InetSocketAddress(configuration.getHostName(), configuration.getPort());
 		EasyMock.expect(connector.connect(socketAddress)).andReturn(connectFuture);
@@ -91,7 +99,6 @@ public class DefaultMinaRequestExecutorTest {
 		EasyMock.expect(session.write(invocation)).andReturn(writeFuture);
 		EasyMock.expect(writeFuture.awaitUninterruptibly()).andReturn(writeFuture);
 		
-		ResultReceiver resultReceiver = EasyMock.createMock(ResultReceiver.class);
 		resultReceiver.resultReceived(expected);
 		EasyMock.expectLastCall().asStub();
 		EasyMock.expect(resultReceiver.takeResult(returnAddress)).andReturn(expected);

@@ -17,6 +17,9 @@
 package org.springframework.remoting.mina;
 
 import java.net.InetSocketAddress;
+import java.net.SocketException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.mina.core.future.ConnectFuture;
@@ -48,20 +51,31 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 
 	private ResultReceiver resultReceiver;
 	
-	private ReentrantLock lock = new ReentrantLock();
+	private Lock lock = new ReentrantLock();
 	
 	private long recoveryInterval = DEFAULT_RECOVERY_INTERVAL;
 
-	private boolean running = true;
+	private AtomicBoolean running = new AtomicBoolean(true);
 
+	private AtomicBoolean connected = new AtomicBoolean(false);
+	
 	
 	@Override
 	public ReturnAddressAwareRemoteInvocationResult executeRequest(ReturnAddressAwareRemoteInvocation invocation) 
 		throws Exception {
 		
+		if (!isConnected()) {
+			return handleDisconnected(invocation);
+		}
+		
 		WriteFuture writeFuture = session.write(invocation);
 		writeFuture.awaitUninterruptibly();
 		return resultReceiver.takeResult(invocation.getReturnAddress());
+	}
+
+	private ReturnAddressAwareRemoteInvocationResult handleDisconnected(ReturnAddressAwareRemoteInvocation invocation) {
+		Exception e = new SocketException("Client disconnected");
+		return new ReturnAddressAwareRemoteInvocationResult(invocation.getReturnAddress(), e );
 	}
 
 	@Override
@@ -86,9 +100,11 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 				ConnectFuture future = connector.connect(getAddress());
 				future.awaitUninterruptibly();
 				session = future.getSession();
+				connected.set(true);
 				logger.info("Successfully connect to " + getAddress());
 				break;
 			} catch(Exception e) {
+				connected.set(false);
 				logger.error("Couldn't connect to " + getAddress() + e.getMessage() + ", retrying in " + recoveryInterval  + " ms", e);
 			}	
 
@@ -98,9 +114,13 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 	}
 
 	private boolean isRunning() {
-		return running ;
+		return running.get();
 	}
 
+	private boolean isConnected() {
+		return connected.get();
+	}
+	
 	/**
 	 * Sleep according to the specified recovery interval.
 	 * Called inbetween recovery attempts.
@@ -124,7 +144,8 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 	@Override
 	public void destroy() throws Exception {
 		lock.lock();
-		running = false;
+		running.set(false);
+		connected.set(false);
 		session.close(false).awaitUninterruptibly();
 		connector.dispose();
 		lock.unlock();

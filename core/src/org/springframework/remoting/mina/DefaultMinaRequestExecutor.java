@@ -125,7 +125,7 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 	public void destroy() throws Exception {
 		lock.lock();
 		running = false;
-		session.closeOnFlush().awaitUninterruptibly();
+		session.close(false).awaitUninterruptibly();
 		connector.dispose();
 		lock.unlock();
 	}

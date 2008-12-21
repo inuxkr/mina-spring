@@ -17,17 +17,9 @@
 package org.springframework.remoting.mina;
 
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.FactoryBean;
 
 /**
  *
@@ -35,9 +27,7 @@ import org.springframework.beans.factory.FactoryBean;
  * @since Dec 10, 2008
  *
  */
-public class NioSocketAcceptorFactoryBean implements FactoryBean {
-
-	private static Logger logger = LoggerFactory.getLogger(NioSocketAcceptorFactoryBean.class);
+public class NioSocketAcceptorFactoryBean extends AbstractIoServiceFactoryBean {
 
 	public static final int DEFAULT_PORT = 8012;
 	public static final int DEFAULT_READ_BUFFER_SIZE = 2048;
@@ -51,31 +41,15 @@ public class NioSocketAcceptorFactoryBean implements FactoryBean {
 	
 	private int idleTime = DEFAULT_IDLE_TIME;
 	
-	private Map<String, IoFilter> extraFilters = new HashMap<String, IoFilter>();
-	
-
 	@Override
 	public Object getObject() throws Exception {
 		acceptor = new NioSocketAcceptor();
 		acceptor.setDefaultLocalAddress(new InetSocketAddress(port));
-		addFilters();
+		configFilters(acceptor);
 		configSession();
 		return acceptor;
 	}
 
-
-	private void addFilters() {
-		for (Map.Entry<String, IoFilter> entry : extraFilters.entrySet()) {
-			if (logger.isInfoEnabled()) {
-				logger.info("Add " + entry.getKey() + " filter...");
-			}
-			acceptor.getFilterChain().addLast(entry.getKey(), entry.getValue());
-		}
-		if (logger.isInfoEnabled()) {
-			logger.info("Add codec filter...");
-		}
-		acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ObjectSerializationCodecFactory()));
-	}
 
 	private void configSession() {
 		acceptor.getSessionConfig().setReadBufferSize(readBufferSize);
@@ -103,10 +77,6 @@ public class NioSocketAcceptorFactoryBean implements FactoryBean {
 
 	public void setIdleTime(int idleTime) {
 		this.idleTime = idleTime;
-	}
-
-	public void setExtraFilters(Map<String, IoFilter> extraFilters) {
-		this.extraFilters = extraFilters;
 	}
 	
 	

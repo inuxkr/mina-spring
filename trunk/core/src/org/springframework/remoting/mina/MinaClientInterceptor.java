@@ -26,7 +26,7 @@ import java.net.URLStreamHandler;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.apache.mina.core.service.IoConnector;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.remoting.RemoteAccessException;
 import org.springframework.remoting.RemoteConnectFailureException;
@@ -44,6 +44,8 @@ import org.springframework.remoting.support.RemoteInvocationBasedAccessor;
 public class MinaClientInterceptor extends RemoteInvocationBasedAccessor 
 	implements MethodInterceptor, DisposableBean, MinaClientConfiguration {
 
+	private IoConnector connector;
+	
 	private MinaRequestExecutor minaRequestExecutor;
 
 	@Override
@@ -111,15 +113,34 @@ public class MinaClientInterceptor extends RemoteInvocationBasedAccessor
 	@Override
 	public void afterPropertiesSet() {
 		super.afterPropertiesSet();
+		if (connector == null) {
+			connector = createDefaultConnector();
+		}
 		if (minaRequestExecutor == null) {
 			minaRequestExecutor = createDefaultRequestExecutor();
+		}
+	}
+
+	public IoConnector getConnector() {
+		return connector;
+	}
+
+	public void setConnector(IoConnector connector) {
+		this.connector = connector;
+	}
+
+	private IoConnector createDefaultConnector() {
+		try {
+			return (IoConnector) new NioSocketConnectorFactoryBean().getObject();
+		} catch (Exception e) {
+			throw new RuntimeException("Could not create default IoConnector : " + e.getMessage(), e);
 		}
 	}
 
 	private MinaRequestExecutor createDefaultRequestExecutor() {
 		MinaRequestExecutor defaultExecutor = new DefaultMinaRequestExecutor();
 		defaultExecutor.setMinaClientConfiguration(this);
-		defaultExecutor.setConnector(new NioSocketConnector());
+		defaultExecutor.setConnector(connector);
 		defaultExecutor.setResultReceiver(new BlockingMapResultReceiver());
 		try {
 			defaultExecutor.afterPropertiesSet();

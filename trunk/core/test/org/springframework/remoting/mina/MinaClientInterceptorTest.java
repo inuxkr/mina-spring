@@ -17,6 +17,7 @@
 package org.springframework.remoting.mina;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.lang.reflect.Method;
 
@@ -33,6 +34,21 @@ import org.springframework.remoting.RemoteAccessException;
  */
 public class MinaClientInterceptorTest {
 
+	@Test
+	public final void createDefaultConnector() {
+		MinaRequestExecutor minaRequestExecutor = EasyMock.createMock(MinaRequestExecutor.class);
+		
+		EasyMock.replay(minaRequestExecutor);
+		
+		MinaClientInterceptor interceptor = new MinaClientInterceptor();
+		interceptor.setServiceUrl("tcp://localhost:8012");
+		interceptor.setMinaRequestExecutor(minaRequestExecutor);
+		interceptor.afterPropertiesSet();
+		assertNotNull(interceptor.getConnector());
+	
+		EasyMock.verify(minaRequestExecutor);
+	}
+	
 	@Test
 	public final void invokeCorrectly() throws Throwable {
 		Object expected = new Object();
@@ -53,7 +69,7 @@ public class MinaClientInterceptorTest {
 		EasyMock.replay(mocks);
 		
 		MinaClientInterceptor interceptor = new MinaClientInterceptor();
-		interceptor.setServiceUrl("tcp://localhost:22222");
+		interceptor.setServiceUrl("tcp://localhost:8012");
 		interceptor.setMinaRequestExecutor(minaRequestExecutor);
 		interceptor.afterPropertiesSet();
 		Object actual = interceptor.invoke(methodInvocation);
@@ -80,7 +96,7 @@ public class MinaClientInterceptorTest {
 		EasyMock.replay(mocks);
 		
 		MinaClientInterceptor interceptor = new MinaClientInterceptor();
-		interceptor.setServiceUrl("tcp://localhost:22222");
+		interceptor.setServiceUrl("tcp://localhost:8012");
 		interceptor.setMinaRequestExecutor(minaRequestExecutor);
 		interceptor.afterPropertiesSet();
 		interceptor.invoke(methodInvocation);

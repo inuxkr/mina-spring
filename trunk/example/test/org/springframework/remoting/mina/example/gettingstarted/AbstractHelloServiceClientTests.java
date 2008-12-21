@@ -37,7 +37,7 @@ public abstract class AbstractHelloServiceClientTests {
 	public Logger logger = LoggerFactory.getLogger(getClass());
 	
 	private static final int CONCURRENT_SIZE = 10;
-	private static final int RUN_TIMES = 10000;
+	private static final int RUN_TIMES = 1000;
 
 	protected void invokeService(final HelloService service) throws InterruptedException {
 		ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);

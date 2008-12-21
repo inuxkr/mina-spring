@@ -20,6 +20,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.mina.core.filterchain.IoFilter;
+import org.apache.mina.core.filterchain.IoFilterAdapter;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.junit.Test;
 
@@ -32,6 +38,8 @@ import org.junit.Test;
  */
 public class NioSocketAcceptorFactoryBeanTest {
 	
+	private static final int EXTRA_FILTER_SIZE = 10;
+
 	@Test
 	public void getObjectType() {
 		assertSame(NioSocketAcceptor.class, new NioSocketAcceptorFactoryBean().getObjectType());
@@ -43,7 +51,7 @@ public class NioSocketAcceptorFactoryBeanTest {
 	}
 	
 	@Test
-	public void test() throws Exception {
+	public void settings() throws Exception {
 		int expectedPort = 8012;
 		int expectedReadBufferSize = 1024;
 		int expectedBothIdleTime = 20;
@@ -56,5 +64,32 @@ public class NioSocketAcceptorFactoryBeanTest {
 		assertEquals(expectedReadBufferSize, acceptor.getSessionConfig().getReadBufferSize());
 		assertEquals(expectedBothIdleTime, acceptor.getSessionConfig().getBothIdleTime());
 	}
+	
+	@Test
+	public void protocolCodecFilterBuiltIn() throws Exception {
+		NioSocketAcceptorFactoryBean factoryBean = new NioSocketAcceptorFactoryBean();
+		NioSocketAcceptor acceptor = (NioSocketAcceptor) factoryBean.getObject();;
+		assertTrue(acceptor.getFilterChain().contains(ProtocolCodecFilter.class));
+	}
+	
+	@Test
+	public void extraFilters() throws Exception {
+		NioSocketAcceptorFactoryBean factoryBean = new NioSocketAcceptorFactoryBean();
+		Map<String, IoFilter> extraFilters = new HashMap<String, IoFilter>();
+		
+		for (int i = 0; i < EXTRA_FILTER_SIZE; i++) {
+			extraFilters.put("extraFilter" + i, new IoFilterAdapter());
+		}
+		
+		factoryBean.setExtraFilters(extraFilters);
+		
+		NioSocketAcceptor acceptor = (NioSocketAcceptor) factoryBean.getObject();
+		for (IoFilter filter : extraFilters.values()) {
+			assertTrue(acceptor.getFilterChain().contains(filter));
+		}
+		
+		assertTrue(acceptor.getFilterChain().contains(ProtocolCodecFilter.class));		
+	}
+	
 	
 }

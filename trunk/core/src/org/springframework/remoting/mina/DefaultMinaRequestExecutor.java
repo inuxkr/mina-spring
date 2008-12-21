@@ -37,9 +37,10 @@ import org.springframework.util.Assert;
  */
 public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 	
-	private static final long DEFAULT_RECOVERY_INTERVAL = 3000L;
-
 	private static Logger logger = LoggerFactory.getLogger(DefaultMinaRequestExecutor.class);
+
+	public static final long DEFAULT_RECOVERY_INTERVAL = 3000L;
+	
 	
 	private IoConnector connector;
 	

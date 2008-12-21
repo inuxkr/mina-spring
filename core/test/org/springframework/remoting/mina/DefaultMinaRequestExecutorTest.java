@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.InetSocketAddress;
 
-import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.future.CloseFuture;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.future.WriteFuture;
@@ -76,9 +75,7 @@ public class DefaultMinaRequestExecutorTest {
 		ReturnAddressAwareRemoteInvocationResult expected = new ReturnAddressAwareRemoteInvocationResult(returnAddress, value);
 
 		MinaClientConfiguration configuration = new StaticConfiguration();
-		IoConnector connector = EasyMock.createMock(IoConnector.class);
-		DefaultIoFilterChainBuilder filterChain = new DefaultIoFilterChainBuilder();
-		EasyMock.expect(connector.getFilterChain()).andReturn(filterChain);
+		IoConnector connector = EasyMock.createMock(IoConnector.class);		
 		connector.setHandler((IoHandler) EasyMock.anyObject());
 		EasyMock.expectLastCall().asStub();
 		

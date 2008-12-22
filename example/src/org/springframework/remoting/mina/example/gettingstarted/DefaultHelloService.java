@@ -18,15 +18,23 @@ package org.springframework.remoting.mina.example.gettingstarted;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class DefaultHelloService implements HelloService {
 
+	private static Logger logger = LoggerFactory.getLogger(DefaultHelloService.class);  
+	
 	private static AtomicInteger counter = new AtomicInteger();
 	
 	@Override
 	public HelloResponse sayHello(HelloRequest helloRequest) {
 		HelloResponse helloResponse = new HelloResponse();
 		helloResponse.setSequence(counter.incrementAndGet());
+		if (logger.isDebugEnabled()) {
+			logger.debug(helloResponse.toString());
+		}
 		return helloResponse;
 	}
 

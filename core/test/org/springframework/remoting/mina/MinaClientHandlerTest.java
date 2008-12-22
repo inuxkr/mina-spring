@@ -47,12 +47,25 @@ public class MinaClientHandlerTest {
 	}
 
 	@Test
-	public final void sessionClosed() throws Exception {
+	public final void sessionClosedWhenExecutorRunning() throws Exception {
+		sessionClosed(true);
+	}
+	
+	@Test
+	public final void sessionClosedWhenExecutorDestroyed() throws Exception {
+		sessionClosed(false);
+	}
+
+	private void sessionClosed(boolean isRunning) throws Exception {
 		ResultReceiver resultReceiver = EasyMock.createMock(ResultReceiver.class);
 		MinaRequestExecutor requestExecutor = EasyMock.createMock(MinaRequestExecutor.class);
+		EasyMock.expect(requestExecutor.isRunning()).andReturn(isRunning);
 		IoSession session = null;
-		requestExecutor.connect();
-		EasyMock.expectLastCall().asStub();
+		
+		if (isRunning) {
+			requestExecutor.connect();
+			EasyMock.expectLastCall().asStub();
+		}
 		
 		Object[] mocks = new Object[] {resultReceiver, requestExecutor};
 		EasyMock.replay(mocks);

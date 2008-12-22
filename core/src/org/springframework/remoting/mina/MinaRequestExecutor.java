@@ -37,4 +37,6 @@ public interface MinaRequestExecutor extends InitializingBean, DisposableBean {
 	ReturnAddressAwareRemoteInvocationResult executeRequest(ReturnAddressAwareRemoteInvocation invocation) throws Exception;
 
 	void connect();
+
+	boolean isRunning();
 }

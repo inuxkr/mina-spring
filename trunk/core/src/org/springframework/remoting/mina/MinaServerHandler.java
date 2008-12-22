@@ -42,6 +42,9 @@ public class MinaServerHandler extends IoHandlerAdapter {
 
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Message received : " + message);
+		}
 		Assert.isInstanceOf(ReturnAddressAwareRemoteInvocation.class, message);
 		ReturnAddressAwareRemoteInvocation invocation = (ReturnAddressAwareRemoteInvocation) message;
 		ReturnAddressAwareRemoteInvocationResult result = invocationHandler.invoke(invocation);

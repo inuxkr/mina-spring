@@ -94,15 +94,15 @@ public class DefaultMinaRequestExecutorTest {
 		ReturnAddressAwareRemoteInvocation invocation = new ReturnAddressAwareRemoteInvocation(returnAddress, decorated);
 		WriteFuture writeFuture = EasyMock.createMock(WriteFuture.class);
 		EasyMock.expect(session.write(invocation)).andReturn(writeFuture);
-		EasyMock.expect(writeFuture.awaitUninterruptibly()).andReturn(writeFuture);
+//		EasyMock.expect(writeFuture.awaitUninterruptibly()).andReturn(writeFuture);
 		
 		resultReceiver.resultReceived(expected);
 		EasyMock.expectLastCall().asStub();
 		EasyMock.expect(resultReceiver.takeResult(returnAddress)).andReturn(expected);
 		
 		CloseFuture closeFuture = EasyMock.createMock(CloseFuture.class);
-		EasyMock.expect(session.close(false)).andReturn(closeFuture);
-		EasyMock.expect(closeFuture.awaitUninterruptibly()).andReturn(closeFuture);
+		EasyMock.expect(session.close(true)).andReturn(closeFuture);
+//		EasyMock.expect(closeFuture.awaitUninterruptibly()).andReturn(closeFuture);
 		connector.dispose();
 		EasyMock.expectLastCall().asStub();
 		

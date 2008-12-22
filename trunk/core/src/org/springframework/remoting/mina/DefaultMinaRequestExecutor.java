@@ -68,7 +68,7 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 		}
 		
 		WriteFuture writeFuture = session.write(invocation);
-		writeFuture.awaitUninterruptibly();
+//		writeFuture.awaitUninterruptibly();
 		return resultReceiver.takeResult(invocation.getReturnAddress());
 	}
 
@@ -111,7 +111,8 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 		lock.unlock();
 	}
 
-	private boolean isRunning() {
+	@Override
+	public boolean isRunning() {
 		return running.get();
 	}
 
@@ -141,12 +142,12 @@ public class DefaultMinaRequestExecutor implements MinaRequestExecutor {
 
 	@Override
 	public void destroy() throws Exception {
-		lock.lock();
+//		lock.lock();
 		running.set(false);
 		connected.set(false);
-		session.close(false).awaitUninterruptibly();
+		session.close(true);
 		connector.dispose();
-		lock.unlock();
+//		lock.unlock();
 	}
 
 	@Override

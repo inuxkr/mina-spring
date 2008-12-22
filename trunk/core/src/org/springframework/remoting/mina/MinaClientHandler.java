@@ -64,11 +64,18 @@ public class MinaClientHandler extends IoHandlerAdapter {
 	
     @Override
 	public void sessionClosed(IoSession session) throws Exception {
-    	//FIXME a deadlock will preent if DefaultMinaRequestExecutor#destroy invoked !!!
+    	boolean running = requestExecutor.isRunning();
+    	if (!running) {
+    		if (logger.isInfoEnabled()) {
+    			logger.info("ReqeustExecutor is not running, do nothing");
+    		}
+    		return;
+    	}
+    	
     	if (logger.isInfoEnabled()) {
     		logger.info("Session closed, try reconnect to server");
-    		requestExecutor.connect();
     	}
+    	requestExecutor.connect();
 	}
 
 

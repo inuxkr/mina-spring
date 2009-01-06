@@ -16,6 +16,12 @@
 
 package org.springframework.remoting.mina;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import org.apache.mina.core.service.IoProcessor;
+import org.apache.mina.transport.socket.nio.NioProcessor;
+import org.apache.mina.transport.socket.nio.NioSession;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 /**
@@ -30,7 +36,9 @@ public class NioSocketConnectorFactoryBean extends AbstractIoServiceFactoryBean 
 	
 	@Override
 	public Object getObject() throws Exception {
-		connector = new NioSocketConnector();
+		Executor executor = Executors.newCachedThreadPool();
+		IoProcessor<NioSession> ioProcessor = new NioProcessor(Executors.newCachedThreadPool());
+		connector = new NioSocketConnector(executor, ioProcessor);
 		configFilters(connector);
 		return connector;
 	}

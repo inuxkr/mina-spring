@@ -39,7 +39,7 @@ public abstract class AbstractHelloServiceClientTests {
 
 	public Logger logger = LoggerFactory.getLogger(getClass());
 	
-	private static final int CONCURRENT_SIZE = 1;
+	private static final int CONCURRENT_SIZE = 10;
 	private static final int RUN_TIMES = 10000;
 
 	private boolean useConcurrent = true;

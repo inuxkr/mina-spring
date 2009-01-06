@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	
+	<bean class="org.apache.mina.springrpc.MinaServiceExporter">
+		<property name="ioAcceptor" ref="ioAcceptor" />
+		<property name="service" ref="helloService" />
+		<property name="serviceInterface" value="org.apache.mina.springrpc.example.gettingstarted.HelloService" />
+	</bean>
+	
+	<bean id="ioAcceptor" class="org.apache.mina.springrpc.NioSocketAcceptorFactoryBean" />
+	
+	<bean id="helloService" class="org.apache.mina.springrpc.example.gettingstarted.DefaultHelloService" />
+		
+</beans>
